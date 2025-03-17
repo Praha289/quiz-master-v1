@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Quiz Portal</h1>
+    <p>Select a quiz to attempt or view your scores.</p>
+
+    <h2>Available Subjects</h2>
+    <ul>
+        {% for subject in subjects %}
+            <li>
+                <strong>{{ subject.name }}</strong>
+
+                <h3>Chapters</h3>
+                <ul>
+                    {% for chapter in subject.chapters %}
+                        <li>
+                            <strong>{{ chapter.name }}</strong>
+
+                            <h4>Quizzes</h4>
+                            <ul>
+                                {% for quiz in chapter.quizzes %}
+                                    <li>
+                                        {{ quiz.title }} ({{ quiz.time_duration }} mins)
+                                        
+                                        <!-- Attempt Quiz -->
+                                        <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}">
+                                            <button>Attempt Quiz</button>
+                                        </a>
+
+                                        <!-- View Scores -->
+                                        <a href="{{ url_for('view_quiz_scores', quiz_id=quiz.id) }}">
+                                            <button>View Scores</button>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>No quizzes available</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li>No chapters available</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% else %}
+            <li>No subjects available</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Welcome Admin!</h1>
+    <p>Manage subjects, chapters, and quizzes here.</p>
+
+    <h2>Subjects</h2>
+    <ul>
+        {% for subject in subjects %}
+            <li>
+                <strong>{{ subject.name }}</strong>
+                <form action="{{ url_for('delete_subject', subject_id=subject.id) }}" method="post" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+
+                <!-- Add Chapter Form -->
+                <form action="{{ url_for('add_chapter') }}" method="post">
+                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                    <input type="text" name="chapter_name" placeholder="Enter chapter name" required>
+                    <button type="submit">Add Chapter</button>
+                </form>
+
+                <h3>Chapters</h3>
+                <ul>
+                    {% for chapter in subject.chapters %}
+                        <li>
+                            {{ chapter.name }}
+                            <form action="{{ url_for('delete_chapter', chapter_id=chapter.id) }}" method="post" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+
+                            <!-- Add Quiz Form -->
+                            <form action="{{ url_for('add_quiz') }}" method="post">
+                                <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                <input type="hidden" name="chapter_id" value="{{ chapter.id }}">
+                                <input type="text" name="quiz_name" placeholder="Enter quiz title" required>
+                                <input type="number" name="time_duration" placeholder="Duration (minutes)" required>
+                                <button type="submit">Add Quiz</button>
+                            </form>
+
+                            <!-- Display Quizzes -->
+                            <h4>Quizzes</h4>
+                            <ul>
+                                {% for quiz in chapter.quizzes %}
+                                    <li>
+                                        {{ quiz.title }} ({{ quiz.time_duration }} mins)
+                                        <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}">
+                                            <button>Start Quiz</button>
+                                        </a>
+
+                                        <a href="{{ url_for('manage_questions', chapter_id=chapter.id, quiz_id=quiz.id) }}">
+                                            Manage Questions
+                                        </a>
+                                        
+
+                                        <!-- Delete Quiz -->
+                                        <form action="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" method="post" style="display:inline;">
+                                            <button type="submit">Delete Quiz</button>
+                                        </form>
+                                    </li>
+                                {% else %}
+                                    <li>No quizzes available</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li>No chapters available</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Add a New Subject</h3>
+    <form action="{{ url_for('add_subject') }}" method="post">
+        <input type="text" name="subject_name" placeholder="Enter subject name" required>
+        <button type="submit">Add Subject</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+</body>
+</html>
+
